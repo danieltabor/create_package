@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 ## Copyright (c) 2022 Daniel Tabor
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,8 @@ import subprocess
 import select
 
 def usage():
-	print "Usage:"
-	print "%s [-h] [-s strace_path] [-o log_output] exe_path" % sys.argv[0]
+	print("Usage:")
+	print("%s [-h] [-s strace_path] [-o log_output] exe_path" % sys.argv[0])
 	sys.exit(1)
 
 def main():
@@ -73,8 +73,8 @@ def main():
 				strace_path = os.path.join(d,"strace")
 				break
 		if strace_path == None:
-			print "ERROR: strace not found, please include path"
-			print ""
+			print("ERROR: strace not found, please include path")
+			print("")
 			usage()
 
 
@@ -84,7 +84,7 @@ def main():
 	while True:
 		rl, wl, xl = select.select([proc.stderr],[],[],0)
 		if len(rl):
-			line = proc.stderr.readline()
+			line = proc.stderr.readline().decode()
 			if not len(line):
 				#Reached EOF on stderr, process is done
 				break
@@ -114,7 +114,7 @@ def main():
 	output_fp.write("#######################################\n")
 	output_fp.write("##  Files used by %s\n" % exe_path)
 	output_fp.write("#######################################\n")
-	paths = file_paths.keys()
+	paths = [x for x in file_paths.keys()]
 	paths.sort()
 	for p in paths:
 		output_fp.write("%s\n"%p)
