@@ -1,5 +1,11 @@
-Harvester Tools
-===========================
+# Create Package Tools
+
+These scripts were made to solve the problem of moving a working Linux executable from the system it was built on to another Linux system.  If the vintages, distributions, and installed packages of these two systems are similar enough, this transition is as easy as copying the executable file.  However, this is not always the case.  So, these scripts can be used to determine the required support files (dynamic libraries, etc.) for a working executable.  They then copy the executable and required support files into a seperate distribution directory and create a script that modifies environmental variables to force the support files on the original, build, system to be used rather than the native files of the executing system.
+
+These scripts are not perfect or comprehensive, but work reasonably well for general executables (including Qt based applications).
+
+# Tool Descriptions
+
 create_package.py
 -----------------
 This tool is used to create stand-alone distibutions for a single
@@ -75,7 +81,3 @@ Usage:
      root_dir dist_dir
 
 This program utilizes create_package called with the -gd argument.
-
-
-
-
