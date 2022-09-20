@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 ## Copyright (c) 2022 Daniel Tabor
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -32,8 +32,8 @@ data_paths   = {}
 ignore_paths = {}
 
 def usage(cmd):
-	print "Usage:"
-	print "%s [-h] [-c config_dir] src_dir [src_dir ...]" % cmd
+	print("Usage:")
+	print("%s [-h] [-c config_dir] src_dir [src_dir ...]" % cmd)
 	sys.exit(1)
 
 def read_config(config_dir):
@@ -47,7 +47,7 @@ def read_config(config_dir):
 		path = os.path.join(config_dir,path)
 		if not os.path.exists(path):
 			continue
-		fp = open(path,"rb")
+		fp = open(path,"r")
 		while True:
 			line = fp.readline()
 			if not len(line):
@@ -63,10 +63,10 @@ def write_config(config_dir):
 	global data_paths
 	for path, config_dict in [["HARVEST_EXEC",exec_paths],
 														["HARVEST_DATA",data_paths]]:
-		print "  %s: %d total files" % (path,len(config_dict))
-		files = config_dict.keys()
+		print("  %s: %d total files" % (path,len(config_dict)))
+		files = [x for x in config_dict.keys()]
 		files.sort()
-		fp = open(os.path.join(config_dir,path),"wb")
+		fp = open(os.path.join(config_dir,path),"w")
 		for f in files:
 			fp.write("%s\n" % f)
 		fp.close()
@@ -79,7 +79,7 @@ def config_add(config_dict, path):
 		return
 	
 	parts = apath.split("/")[1:]
-	for i in xrange(len(parts)):
+	for i in range(len(parts)):
 		test_path = "/".join(parts)
 		if test_path in ignore_paths:
 			#Configured to ignore this entire directory tree
@@ -93,7 +93,7 @@ def config_add(config_dict, path):
 
 def isELF(path):
 	f = open(path,"rb")
-	hdr = f.read(4)
+	hdr = f.read(4).encode()
 	f.close()
 	if hdr == "\x7fELF":
 		return True

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 ## Copyright (c) 2022 Daniel Tabor
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -27,9 +27,9 @@ import os
 import subprocess
 
 def usage(cmd):
-	print "Usage:"
-	print "%s [-h] [-v] root_dir output_tarball" % cmd
-	print ""
+	print("Usage:")
+	print("%s [-h] [-v] root_dir output_tarball" % cmd)
+	print("")
 	sys.exit(1)
 
 def main(argv):

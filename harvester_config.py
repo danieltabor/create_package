@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 ## Copyright (c) 2022 Daniel Tabor
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -32,8 +32,8 @@ data_paths   = {}
 ignore_paths = {}
 
 def usage(cmd):
-	print "Usage:"
-	print "%s [-h] [-s strace_path] [-c config_dir] exe_path [args...]" % cmd
+	print("Usage:")
+	print("%s [-h] [-s strace_path] [-c config_dir] exe_path [args...]" % cmd)
 	sys.exit(1)
 
 def read_config(config_dir):
@@ -47,7 +47,7 @@ def read_config(config_dir):
 		path = os.path.join(config_dir,path)
 		if not os.path.exists(path):
 			continue
-		fp = open(path,"rb")
+		fp = open(path,"r")
 		while True:
 			line = fp.readline()
 			if not len(line):
@@ -57,16 +57,17 @@ def read_config(config_dir):
 				continue
 			config_dict[line] = None
 		fp.close()
+		
 
 def write_config(config_dir):
 	global exec_paths
 	global data_paths
 	for path, config_dict in [["HARVEST_EXEC",exec_paths],
 														["HARVEST_DATA",data_paths]]:
-		print "  %s: %d total files" % (path,len(config_dict))
-		files = config_dict.keys()
+		print("  %s: %d total files" % (path,len(config_dict)))
+		files = [x for x in config_dict.keys()]
 		files.sort()
-		fp = open(os.path.join(config_dir,path),"wb")
+		fp = open(os.path.join(config_dir,path),"w")
 		for f in files:
 			fp.write("%s\n" % f)
 		fp.close()
@@ -74,14 +75,14 @@ def write_config(config_dir):
 def dequote(s):
 	if s[0] == "\"":
 		if s[-1] != "\"":
-			raise ValueError,"Not quoted %s" % s
+			raise ValueError("Not quoted %s" % s)
 		return s[1:-1]
 	elif s[0] == "'":
 		if s[-1] != "'":
-			raise ValueError,"Not quoted %s" % s
+			raise ValueError("Not quoted %s" % s)
 		return s[1:-1]
 	else:
-		raise ValueError,"Not quoted %s" % s
+		raise ValueError("Not quoted %s" % s)
 
 def config_add(config_dict, path):
 	global ignore_paths
@@ -89,10 +90,12 @@ def config_add(config_dict, path):
 	if apath in config_dict:
 		#Specific path is already configured
 		return
-	
-	parts = apath.split("/")[1:]
-	for i in xrange(len(parts)):
-		test_path = "/".join(parts)
+	if not os.path.exists(apath):
+		#Specific path does not exist
+		return
+	parts = apath.split("/")
+	for i in range(len(parts)):
+		test_path = "/".join(parts[:i+1])
 		if test_path in ignore_paths:
 			#Configured to ignore this entire directory tree
 			return
@@ -154,8 +157,8 @@ def main(argv):
 				strace_path = os.path.join(d,"strace")
 				break
 		if strace_path == None:
-			print "ERROR: strace not found, please include path"
-			print ""
+			print("ERROR: strace not found, please include path")
+			print("")
 			usage(argv[0])
 
 	#Read in the existing configuration
@@ -169,7 +172,7 @@ def main(argv):
 	while True:
 		rl, wl, xl = select.select([proc.stderr],[],[],0)
 		if len(rl):
-			line = proc.stderr.readline()
+			line = proc.stderr.readline().decode()
 			
 			if not len(line):
 				#Reached EOF on stderr, process is done
@@ -213,7 +216,7 @@ def main(argv):
 			sysargs = []
 			esc = []
 			arg = []
-			for i in xrange(s_idx+1,len(call)):
+			for i in range(s_idx+1,len(call)):
 				if not len(esc):
 					if "<unfinished" == call[i:i+11]:
 						#This is a HACK to get around unfinished syscalls 
@@ -273,16 +276,16 @@ def main(argv):
 					continue
 				config_add(exec_paths,exec_path)
 				
-	print "Harvester writing configuration files..."
+	print("Harvester writing configuration files...")
 	write_config(config_dir)
 	
-	print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-	print "!!                                   !!"
-	print "!! Do not forget to examine and edit !!"
-	print "!! the configuration files before    !!"
-	print "!! creating a Harvester package.     !!"
-	print "!!                                   !!"
-	print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+	print("!!                                   !!")
+	print("!! Do not forget to examine and edit !!")
+	print("!! the configuration files before    !!")
+	print("!! creating a Harvester package.     !!")
+	print("!!                                   !!")
+	print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 if __name__ == "__main__":
 	main(sys.argv)

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 ## Copyright (c) 2022 Daniel Tabor
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -28,27 +28,27 @@ import sys
 import os
 
 def usage(cmd):
-	print "Usage:"
-	print "%s [-h] [-v level] [-a] [-d dist_dir | " % cmd
-	print "     -gd root_dir dist_dir] [-qt qt_plugin_dir]"
-	print "     [-xl x_locale_dir] [-cl c_locale_dir] [-tar output_tarball]"
-	print "     executable"
-	print ""
-	print "  -v  : verbose level"
-	print "          level 0 = completely quiet"
-	print "          level 1 = libraries only"
-	print "          level 2 = print everything"
-	print "  -a  : use the dist_dir for multiple packages; implied when"
-	print "        -gd is specified"
-	print "  -d  : Create a self contained package in the specified directory."
-	print "  -gd : Create a global distribution package in root_dir."
-	print "        Shell scripts will be created relative to this root to "
-	print "        represent executables, and binary dependecies will be placed"
-	print "        in the dist_dir, which must be inside the root base tree."
-	print "  Common paths:"
-	print "    qt - /usr/lib/x86_64-linux-gnu/qt5/plugins"
-	print "    xl - /usr/share/X11/locale"
-	print "    cl - /usr/share/locale"
+	print("Usage:")
+	print("%s [-h] [-v level] [-a] [-d dist_dir | " % cmd)
+	print("     -gd root_dir dist_dir] [-qt qt_plugin_dir]")
+	print("     [-xl x_locale_dir] [-cl c_locale_dir] [-tar output_tarball]")
+	print("     executable")
+	print("")
+	print("  -v  : verbose level")
+	print("          level 0 = completely quiet")
+	print("          level 1 = libraries only")
+	print("          level 2 = print everything")
+	print("  -a  : use the dist_dir for multiple packages; implied when")
+	print("        -gd is specified")
+	print("  -d  : Create a self contained package in the specified directory.")
+	print("  -gd : Create a global distribution package in root_dir.")
+	print("        Shell scripts will be created relative to this root to ")
+	print("        represent executables, and binary dependecies will be placed")
+	print("        in the dist_dir, which must be inside the root base tree.")
+	print("  Common paths:")
+	print("    qt - /usr/lib/x86_64-linux-gnu/qt5/plugins")
+	print("    xl - /usr/share/X11/locale")
+	print("    cl - /usr/share/locale")
 	exit(0)
 
 def isELF(path):
@@ -206,7 +206,7 @@ def main(argv):
 	loader_file = None
 	proc = subprocess.Popen(["/usr/bin/strings",src_exec],stdout=subprocess.PIPE)
 	while True:
-		line = proc.stdout.readline()
+		line = proc.stdout.readline().decode()
 		if not len(line):
 			break 
 		line = line.strip()
@@ -220,7 +220,7 @@ def main(argv):
 				loader_file = None
 			break
 	if loader_path == None:
-		print "Unable to determine loader"
+		print("Unable to determine loader")
 		return 1
 
 	#Find all qt plugins (just to be safe) and prep directories
@@ -271,12 +271,12 @@ def main(argv):
 			continue
 
 		if verbose <= verbose_level:
-			print "File: %s" % target
+			print("File: %s" % target)
 
 		dstfile = os.path.join(dstdir,os.path.basename(target))
 		if os.path.exists(dstfile):
 			if not append_mode and verbose <= verbose_level:
-				print "  (already present in package)"
+				print("  (already present in package)")
 		else:
 			shutil.copy(target,dstdir)
 
@@ -284,24 +284,24 @@ def main(argv):
 			proc = subprocess.Popen(["/usr/bin/ldd",target],stdout=subprocess.PIPE)
 			proc.wait()
 			while True:
-				line = proc.stdout.readline()
+				line = proc.stdout.readline().decode()
 				if not len(line):
 					break
 				line = line.strip()
 				items = line.split(" ")
 				if items[1] == "=>" and len(items[2]):
 					if " ".join(items[2:]).lower() == "not found":
-						print "Unidentified library: %s" % items[0]
+						print("Unidentified library: %s" % items[0])
 					else:
 						new_target = items[2]
 						if verbose <= verbose_level:
-							print "  -> %s" % new_target
+							print("  -> %s" % new_target)
 						new_files.append([1,new_target,dst_lib_dir])
 		del new_files[0]
 		old_files[target] = None
 
 	#Create the launcher script
-	f = open(dst_script_path,"wb")
+	f = open(dst_script_path,"w")
 	f.write("#!/bin/bash\n")
 	if global_mode:
 		f.write("export LD_LIBRARY_PATH=%s/lib:$LD_LIBRARY_PATH\n"%dst_dist_dir)
@@ -332,7 +332,7 @@ def main(argv):
 		if verbose_level == 0:
 			args = "-czf"
 		if verbose_level >= 1:
-			print "Creating tarball: %s" % dst_tgz_path
+			print("Creating tarball: %s" % dst_tgz_path)
 		if verbose_level >= 2:
 			args = "-czvf"
 			
