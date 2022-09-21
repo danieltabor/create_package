@@ -13,26 +13,34 @@ executable, such that it can be portable between wildly different
 Linux distributions.
 
 Usage:
+
 ./create_package.py [-h] [-v level] [-a] [-d dist_dir | 
      -gd root_dir dist_dir] [-qt qt_plugin_dir]
      [-xl x_locale_dir] [-cl c_locale_dir] [-tar output_tarball]
      executable
 
   -v  : verbose level
-          level 0 = completely quiet
-          level 1 = libraries only
-          level 2 = print everything
-  -a  : use the dist_dir for multiple packages; implied when
-        -gd is specified
+  
+     level 0 = completely quiet
+  
+     level 1 = libraries only
+  
+     level 2 = print everything
+          
+  -a  : use the dist_dir for multiple packages; implied when -gd is specified
+        
   -d  : Create a self contained package in the specified directory.
-  -gd : Create a global distribution package in root_dir.
-        Shell scripts will be created relative to this root to 
-        represent executables, and binary dependecies will be placed
-        in the dist_dir, which must be inside the root base tree.
+  
+  -gd : Create a global distribution package in root_dir.  Shell scripts will be created relative to this root to represent executables, and binary dependecies will be placed in the dist_dir, which must be inside the root base tree.
+  
   Common paths:
+  
     qt - /usr/lib/x86_64-linux-gnu/qt5/plugins
+    
     xl - /usr/share/X11/locale
+    
     cl - /usr/share/locale
+    
 
 
 
@@ -46,6 +54,7 @@ which can later be used by the harvester_build.py tool.  Any file or directory
 listed in HARVEST_IGNORE will be ignored.
 
 Usage:
+
 ./harvester_config.py [-h] [-s strace_path] [-c config_dir] exe_path [args...]
 
 
@@ -63,6 +72,7 @@ output of harvester_config.py.  Also, repeated runs of the program will expand
 on the any existing configuration files.
 
 Usage:
+
 ./harvester_stripmine.py [-h] [-c config_dir] src_dir [src_dir ...]
 
 
@@ -76,8 +86,7 @@ each of the executables, and all of the data files are copied into the
 distribution directory.
 
 Usage:
-./harvester_build.py [-h] [-c config_dir] [-qt qt_plugin_dir]
-     [-xl x_locale_dir] [-cl c_locale_dir]
-     root_dir dist_dir
+
+./harvester_build.py [-h] [-c config_dir] [-qt qt_plugin_dir] [-xl x_locale_dir] [-cl c_locale_dir] root_dir dist_dir
 
 This program utilizes create_package called with the -gd argument.
