@@ -55,7 +55,7 @@ def isELF(path):
 	f = open(path,"rb")
 	hdr = f.read(4)
 	f.close()
-	if hdr == "\x7fELF":
+	if hdr == b'\x7fELF':
 		return True
 	else:
 		return False
